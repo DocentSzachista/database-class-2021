@@ -1,5 +1,6 @@
+1.1. Wszystkich nazwisk pracowników oraz ich wypłat.
 SELECT LAST_NAME, SALARY FROM hr.employees;
-
+1.2. Wszystkich nazw działów w kolumnie "nazwa_dzialu" wraz z numerami identyfikacyjnymi ich kierowników w kolumnie "numer_kierownika". 
 SELECT DEPARTMENT_NAME, MANAGER_ID FROM hr.departments; 
-
+1.3. Nazwisk wszystkich pracowników, którzy zarabiają więcej niż 10000 wraz z ich płacami, posortowane w kolejności od najwięcej do najmniej zarabiającego.
 SELECT LAST_NAME, SALARY FROM hr.employees WHERE SALARY>10000 ORDER BY SALARY DESC;
