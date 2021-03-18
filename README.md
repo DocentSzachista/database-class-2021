@@ -1,5 +1,7 @@
 # database-class-2021
- This repo holds scripts that are solution for database lessons on database HR from Oracle site.
+## author : Damian Raczkowski
+### This repo holds scripts that are solution for database lessons on database HR from Oracle site.
+### Deadline table
 |Lab nr| Assignment date  | Mark | Solution sent |
 | ---- | ---------------  | ---- | ------------- |
 |  01  | 19.03.2021  | ---- | ✔️ |
