@@ -24,6 +24,18 @@ SELECT * FROM hr.employees;
 SELECT manager_id AS kod_kierownika, COUNT(employee_id) AS liczba_pracownikow FROM hr.employees GROUP BY manager_id ORDER BY COUNT(employee_id) DESC;
 --2.9
 SELECT department_id AS numer_departamentu, COUNT(manager_id) AS liczba_managerow FROM hr.departments GROUP BY department_id ORDER BY COUNT(manager_id) DESC; 
---2.10
-
+--2.10 
+SELECT manager_id AS numer_kierownika, MAX(SALARY) AS maksymalna_wyplata 
+FROM hr.employees 
+GROUP BY manager_id;
 --2.11
+SELECT job_id AS kod_stanowiska, AVG(SALARY) AS srednia_wyplata
+FROM hr.employees
+GROUP BY job_id
+ORDER BY AVG(SALARY) DESC ;
+--2.12
+SELECT job_id AS kod_stanowiska, MIN(SALARY) AS minimalna_wyplata, AVG(SALARY) AS srednia_wyplata, MAX(SALARY) AS maksymalna_wyplata 
+FROM hr.employees 
+WHERE SALARY > 5000 
+GROUP BY job_id 
+ORDER BY MIN(SALARY) ASC;
