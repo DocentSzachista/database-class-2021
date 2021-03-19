@@ -10,3 +10,10 @@
 |  04  | Not available | ---- |✖️ ||
 |  05  | Not available | ---- | ✖️||
 |  06  | Not available | ---- | ✖️||
+## Useful hints/documentaries
+
+1. How to use COUNT() with GROUP BY
+     1. https://stackoverflow.com/questions/2722408/how-to-use-count-and-group-by-at-the-same-select-statement
+
+2. AVG() function example
+     1. https://www.sqlshack.com/sql-avg-function-introduction-and-examples/    
