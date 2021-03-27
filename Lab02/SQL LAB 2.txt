@@ -1,29 +1,60 @@
-SELECT * FROM hr.employees;
+
 --2.1
-SELECT DISTINCT JOB_ID AS kod_stanowiska, MANAGER_ID AS numer_kierownika FROM hr.employees WHERE (MANAGER_ID = '100' OR MANAGER_ID = '102') ORDER BY MANAGER_ID DESC;
+SELECT DISTINCT JOB_ID AS kod_stanowiska, MANAGER_ID AS numer_kierownika
+FROM hr.employees 
+WHERE (MANAGER_ID = 100 OR MANAGER_ID = 102) 
+ORDER BY MANAGER_ID DESC;
 --2.2
 SELECT first_name AS imie, last_name AS nazwisko, salary AS wyplata 
 FROM hr.employees 
-WHERE manager_id='100' AND salary>= '10000' 
+WHERE manager_id= 100 AND salary> 10000
 ORDER BY salary ASC;
 --2.3 DOpytac czy
-SELECT first_name AS imie, last_name AS nazwisko, job_id AS kod_stanowiska, salary AS wyplata FROM hr.employees WHERE  JOB_ID LIKE '%!_MGR' ESCAPE '!' ORDER BY salary  DESC ;
+SELECT first_name AS imie, last_name AS nazwisko, job_id AS kod_stanowiska, salary AS wyplata 
+FROM hr.employees 
+WHERE  JOB_ID LIKE '%!_MGR' ESCAPE '!' ORDER BY salary  DESC ;
 --2.4 
-SELECT  job_id AS kod_stanowiska, job_title AS nazwa_stanowiska FROM hr.jobs WHERE job_title LIKE '% %';
+SELECT  job_id AS kod_stanowiska, job_title AS nazwa_stanowiska 
+FROM hr.jobs 
+WHERE job_title LIKE '% %';
 --2.5
-SELECT employee_id AS numer_pracownika, first_name AS imie, last_name AS nazwisko,  salary AS wyplata, job_id AS kod_stanowiska FROM hr.employees WHERE SALARY >'3000' AND (job_id LIKE 'ST%' OR job_id LIKE 'SH%') ORDER BY salary ASC;
+SELECT employee_id AS numer_pracownika, first_name AS imie, last_name AS nazwisko,  salary AS wyplata, job_id AS kod_stanowiska
+FROM hr.employees 
+WHERE SALARY >3000 AND (job_id LIKE 'ST%' OR job_id LIKE 'SH%') 
+ORDER BY salary ASC;
 --2.6
 SELECT job_id AS kod_stanowiska, COUNT(*) AS liczba_pracownikow
 FROM hr.employees
 GROUP BY job_id ORDER BY COUNT(*) DESC;
 --2.7 
-SELECT * FROM hr.departments;
-SELECT location_id AS kod_lokacji, COUNT(department_name) AS liczba_departamentow FROM hr.departments GROUP BY location_id ORDER BY COUNT(department_name) DESC;
---2.8
-SELECT * FROM hr.employees;
-SELECT manager_id AS kod_kierownika, COUNT(employee_id) AS liczba_pracownikow FROM hr.employees GROUP BY manager_id ORDER BY COUNT(employee_id) DESC;
---2.9
-SELECT department_id AS numer_departamentu, COUNT(manager_id) AS liczba_managerow FROM hr.departments GROUP BY department_id ORDER BY COUNT(manager_id) DESC; 
---2.10
 
+SELECT location_id AS kod_lokacji, COUNT(department_name) AS liczba_departamentow 
+FROM hr.departments 
+GROUP BY location_id 
+ORDER BY COUNT(department_name) DESC;
+--2.8
+
+SELECT manager_id AS kod_kierownika, COUNT(employee_id) AS liczba_pracownikow 
+FROM hr.employees 
+GROUP BY manager_id 
+ORDER BY COUNT(employee_id) DESC;
+--2.9
+SELECT department_id AS numer_departamentu, COUNT(manager_id) AS liczba_kierownikow 
+FROM hr.departments
+GROUP BY department_id 
+ORDER BY COUNT(manager_id) DESC; 
+--2.10 
+SELECT manager_id AS numer_kierownika, MAX(SALARY) AS maksymalna_wyplata 
+FROM hr.employees 
+GROUP BY manager_id;
 --2.11
+SELECT job_id AS kod_stanowiska, AVG(SALARY) AS srednia_wyplata
+FROM hr.employees
+GROUP BY job_id
+ORDER BY AVG(SALARY) DESC ;
+--2.12
+SELECT job_id AS kod_stanowiska, MIN(SALARY) AS minimalna_wyplata, AVG(SALARY) AS srednia_wyplata, MAX(SALARY) AS maksymalna_wyplata 
+FROM hr.employees 
+WHERE SALARY > 5000 
+GROUP BY job_id 
+ORDER BY MIN(SALARY) ASC;
