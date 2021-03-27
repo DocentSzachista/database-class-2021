@@ -1,0 +1,24 @@
+select* from HR.EMPLOYEES, HR.DEPARTMENTS;
+--3.1 a) trzeba sie dopytac o to czy trzeba tak samo porównac czy tez nie
+SELECT hr.departments.department_name AS nazwa_dzialu, hr.employees.last_name AS nazwisko, hr.employees.salary AS wynagrodzenie
+FROM HR.EMPLOYEES, HR.DEPARTMENTS
+WHERE hr.employees.salary >12000 AND hr.employees.department_id=hr.departments.department_id
+ORDER BY hr.employees.salary DESC;
+--3.1 b)
+SELECT hr.departments.department_name AS nazwa_dzialu, hr.employees.last_name AS nazwisko, hr.employees.salary AS wynagrodzenie
+FROM HR.EMPLOYEES INNER JOIN hr.departments 
+ON hr.employees.department_id=hr.departments.department_id
+WHERE hr.employees.salary >12000
+ORDER BY hr.employees.salary DESC;
+--3.2 a)
+SELECT hr.employees.last_name AS nazwisko, hr.departments.department_name AS nazwa_dzialu, hr.locations.city AS miasto FROM HR.EMPLOYEES, HR.DEPARTMENTS, HR.LOCATIONS
+WHERE hr.employees.department_id = hr.departments.department_id AND hr.departments.location_id=hr.locations.location_id;
+--3.2 b)
+SELECT hr.employees.last_name AS nazwisko, hr.departments.department_name AS nazwa_dzialu, hr.locations.city AS miasto 
+FROM HR.EMPLOYEES INNER JOIN hr.departments 
+ON hr.employees.department_id=hr.departments.department_id
+INNER JOIN hr.locations ON hr.departments.location_id = hr.locations.location_id;
+--3.3
+SELECT hr.departments.department_name AS nazwa_dzialu, COUNT(hr.employees.employee_id) AS liczba_pracownikow FROM hr.employees
+INNER JOIN hr.departments ON hr.employee.department_id= hr.departments.department_id
+GROUP BY  hr.departments.department_name;
