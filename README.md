@@ -17,3 +17,5 @@
 
 2. AVG() function example
      1. https://www.sqlshack.com/sql-avg-function-introduction-and-examples/    
+3. Example of using INNER JOIN with USING
+     1. https://lornajane.net/posts/2012/sql-joins-with-on-or-using
