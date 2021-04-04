@@ -22,3 +22,48 @@ INNER JOIN hr.locations ON hr.departments.location_id = hr.locations.location_id
 SELECT hr.departments.department_name AS nazwa_dzialu, COUNT(hr.employees.employee_id) AS liczba_pracownikow FROM hr.employees
 INNER JOIN hr.departments ON hr.employee.department_id= hr.departments.department_id
 GROUP BY  hr.departments.department_name;
+--3.4 nwm nie znam tej komendy 
+SELECT * FROM hr.employees,  hr.locations, hr.countries;
+SELECT COUNT(hr.employees.employee_id) AS liczba_pracownikow, hr.countries.country_name AS nazwa_panstwa FROM hr.employees
+INNER JOIN hr.departments USING (department_id)
+INNER JOIN hr.locations USING (location_id)
+INNER JOIN hr.countries USING (country_id)
+GROUP BY hr.countries.country_name;
+
+
+--3.4 poytać sie trzeba bo cos za malo osob wyszlo ( o 1 za malo)
+SELECT ct.country_name, COUNT(emp.employee_id) 
+FROM hr.countries ct
+INNER JOIN hr.locations loc
+ON loc.country_id=ct.country_id
+INNER JOIN hr.departments dpd
+ON dpd.location_id=loc.location_id
+INNER JOIN hr.employees emp
+ON emp.department_id=dpd.department_id
+GROUP BY ct.country_name;
+--3.5
+--3.6
+SELECT emp.last_name, dpd.department_name, loc.city FROM hr.employees emp
+RIGHT OUTER JOIN hr.departments dpd
+ON emp.department_id = dpd.department_id
+RIGHT OUTER JOIN hr.locations loc
+ON dpd.location_id=loc.location_id;
+--3.7
+SELECT dpd.department_name, COUNT(emp.employee_id)  FROM hr.departments dpd
+NATURAL JOIN hr.employees emp
+GROUP BY dpd.department_name
+HAVING COUNT(emp.employee_id)>5;
+--3.8
+SELECT emp.last_name, ROUND(emp.salary/((jb.max_salary+jb.min_salary)/2), 2) AS placa_Proc 
+FROM hr.employees emp
+NATURAL JOIN hr.jobs jb
+ORDER BY ROUND(emp.salary/((jb.max_salary+jb.min_salary)/2), 2) DESC;
+--3,9 
+SELECT hr.locations.city, COUNT(emp.employee_id)  FROM hr.locations 
+JOIN  hr.departments dpd  USING (location_id)
+JOIN  hr.employees emp USING (department_id)
+JOIN  hr.jobs jb USING (job_id)
+GROUP BY hr.locations.city 
+--HAVING emp.salary <jb.max_salary;
+
+--3.9
