@@ -19,3 +19,9 @@
      1. https://www.sqlshack.com/sql-avg-function-introduction-and-examples/    
 3. Example of using INNER JOIN with USING
      1. https://lornajane.net/posts/2012/sql-joins-with-on-or-using
+## Sekcja na projekt
+Projektowanie ERD
+Wykład 6.2 , 7.0
+
+Kreator do ERD 
+https://online.visual-paradigm.com/app/diagrams/#diagram:proj=0&type=ERDiagram
