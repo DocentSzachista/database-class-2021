@@ -42,6 +42,11 @@ INNER JOIN hr.employees emp
 ON emp.department_id=dpd.department_id
 GROUP BY ct.country_name;
 --3.5
+SELECT last_name "nazwisko", (SELECT last_name FROM hr.employees emp_in WHERE  emp_out.manager_id = emp_in.employee_id) "nazwisko kierownika" 
+FROM hr.employees emp_out
+ORDER BY "nazwisko kierownika" ASC; 
+
+
 --3.6
 SELECT emp.last_name, dpd.department_name, loc.city FROM hr.employees emp
 RIGHT OUTER JOIN hr.departments dpd
@@ -59,11 +64,10 @@ FROM hr.employees emp
 NATURAL JOIN hr.jobs jb
 ORDER BY ROUND(emp.salary/((jb.max_salary+jb.min_salary)/2), 2) DESC;
 --3,9 
-SELECT hr.locations.city, COUNT(emp.employee_id)  FROM hr.locations 
+SELECT hr.locations.city "miasto", COUNT(emp.employee_id) "liczba pracowników"  FROM hr.locations 
 JOIN  hr.departments dpd  USING (location_id)
 JOIN  hr.employees emp USING (department_id)
 JOIN  hr.jobs jb USING (job_id)
-GROUP BY hr.locations.city 
---HAVING emp.salary <jb.max_salary;
+WHERE emp.salary > 0.8*jb.max_salary
+GROUP BY hr.locations.city;
 
---3.9
