@@ -11,7 +11,8 @@ ON hr.employees.department_id=hr.departments.department_id
 WHERE hr.employees.salary >12000
 ORDER BY hr.employees.salary DESC;
 --3.2 a)
-SELECT hr.employees.last_name AS nazwisko, hr.departments.department_name AS nazwa_dzialu, hr.locations.city AS miasto FROM HR.EMPLOYEES, HR.DEPARTMENTS, HR.LOCATIONS
+SELECT hr.employees.last_name AS nazwisko, hr.departments.department_name AS nazwa_dzialu, hr.locations.city AS miasto 
+FROM HR.EMPLOYEES, HR.DEPARTMENTS, HR.LOCATIONS
 WHERE hr.employees.department_id = hr.departments.department_id AND hr.departments.location_id=hr.locations.location_id;
 --3.2 b)
 SELECT hr.employees.last_name AS nazwisko, hr.departments.department_name AS nazwa_dzialu, hr.locations.city AS miasto 
@@ -22,39 +23,32 @@ INNER JOIN hr.locations ON hr.departments.location_id = hr.locations.location_id
 SELECT hr.departments.department_name AS nazwa_dzialu, COUNT(hr.employees.employee_id) AS liczba_pracownikow FROM hr.employees
 INNER JOIN hr.departments ON hr.employee.department_id= hr.departments.department_id
 GROUP BY  hr.departments.department_name;
---3.4 nwm nie znam tej komendy 
-SELECT * FROM hr.employees,  hr.locations, hr.countries;
-SELECT COUNT(hr.employees.employee_id) AS liczba_pracownikow, hr.countries.country_name AS nazwa_panstwa FROM hr.employees
-INNER JOIN hr.departments USING (department_id)
-INNER JOIN hr.locations USING (location_id)
-INNER JOIN hr.countries USING (country_id)
-GROUP BY hr.countries.country_name;
-
-
---3.4 poytać sie trzeba bo cos za malo osob wyszlo ( o 1 za malo)
+--3.4 gut
 SELECT ct.country_name, COUNT(emp.employee_id) 
 FROM hr.countries ct
-INNER JOIN hr.locations loc
-ON loc.country_id=ct.country_id
-INNER JOIN hr.departments dpd
-ON dpd.location_id=loc.location_id
-INNER JOIN hr.employees emp
-ON emp.department_id=dpd.department_id
+INNER JOIN hr.locations loc ON loc.country_id=ct.country_id
+INNER JOIN hr.departments dpd ON dpd.location_id=loc.location_id
+INNER JOIN hr.employees emp ON emp.department_id=dpd.department_id
 GROUP BY ct.country_name;
 --3.5
 SELECT last_name "nazwisko", (SELECT last_name FROM hr.employees emp_in WHERE  emp_out.manager_id = emp_in.employee_id) "nazwisko kierownika" 
 FROM hr.employees emp_out
 ORDER BY "nazwisko kierownika" ASC; 
-
-
+-- alternatywna 3.5
+SELECT e.last_name "Nazwisko pracownika", m.last_name "Nazwisko managera" from
+HR.employees e
+JOIN HR.employees m ON e.manager_id = m.employee_id
+ORDER BY m.last_name;
 --3.6
-SELECT emp.last_name, dpd.department_name, loc.city FROM hr.employees emp
+SELECT emp.last_name, dpd.department_name, loc.city 
+FROM hr.employees emp
 RIGHT OUTER JOIN hr.departments dpd
 ON emp.department_id = dpd.department_id
 RIGHT OUTER JOIN hr.locations loc
 ON dpd.location_id=loc.location_id;
 --3.7
-SELECT dpd.department_name, COUNT(emp.employee_id)  FROM hr.departments dpd
+SELECT dpd.department_name, COUNT(emp.employee_id) 
+FROM hr.departments dpd
 NATURAL JOIN hr.employees emp
 GROUP BY dpd.department_name
 HAVING COUNT(emp.employee_id)>5;
@@ -64,7 +58,8 @@ FROM hr.employees emp
 NATURAL JOIN hr.jobs jb
 ORDER BY ROUND(emp.salary/((jb.max_salary+jb.min_salary)/2), 2) DESC;
 --3,9 
-SELECT hr.locations.city "miasto", COUNT(emp.employee_id) "liczba pracowników"  FROM hr.locations 
+SELECT hr.locations.city "miasto", COUNT(emp.employee_id) "liczba pracowników" 
+FROM hr.locations 
 JOIN  hr.departments dpd  USING (location_id)
 JOIN  hr.employees emp USING (department_id)
 JOIN  hr.jobs jb USING (job_id)
