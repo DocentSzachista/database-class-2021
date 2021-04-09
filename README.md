@@ -9,7 +9,7 @@
 |  03  | 15.04.2021 | ---- |✖️ |All DONE|
 |  04  | Not available | ---- |✖️ |ALL DONE|
 |  05  | Not available | ---- | ✖️|ALL DONE|
-|  06  | Not available | ---- | ✖️||
+|  06  | Not available | ---- | ✖️|ITS an exam|
 ## Useful hints/documentaries
 
 1. How to use COUNT() with GROUP BY
