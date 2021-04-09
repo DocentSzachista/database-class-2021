@@ -8,7 +8,7 @@
 |  02  | 02.04.2021 | ---- | ✔️ |All DONE  |
 |  03  | 15.04.2021 | ---- |✖️ |All DONE|
 |  04  | Not available | ---- |✖️ |ALL DONE|
-|  05  | Not available | ---- | ✖️||
+|  05  | Not available | ---- | ✖️|ALL DONE|
 |  06  | Not available | ---- | ✖️||
 ## Useful hints/documentaries
 
