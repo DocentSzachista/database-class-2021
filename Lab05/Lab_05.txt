@@ -1,0 +1,28 @@
+--5.1
+INSERT INTO hr.employees (employee_id, last_name, email, hire_date, job_id) 
+VALUES(10, 'Kovalsky', 'Koval', '10/10/10', (SELECT job_id 
+                                             FROM hr.employees 
+                                             WHERE salary = (SELECT MAX(salary) 
+                                                             FROM hr.employees)));
+--5.2
+UPDATE hr.employees SET SALARY = (SELECT AVG(salary) 
+                                  FROM hr.employees 
+                                  WHERE last_name = 'K%')
+WHERE employee_id = 10;
+--5.3
+DELETE FROM hr.employees WHERE phone_number IS NULL;
+--5.4
+
+CREATE TABLE STUDENCI(
+    numer_indeksu NUMBER(6) PRIMARY KEY,
+    imie VARCHAR(16) NOT NULL,
+    nazwisko VARCHAR(32) NOT NULL,
+    data_ur DATE NULL,
+    Srednia_ocen NUMBER(2,1) NULL, CHECK (Srednia_ocen >= 2.0 AND Srednia_ocen <=5.5),
+    plec VARCHAR(1) NOT NULL, CHECK (plec='M' OR plec='F')
+);
+--5.5
+INSERT INTO STUDENCI VALUES (1, 'Damn', 'Racz', '10-oct-10', 2.5, 'M');
+--5.6
+ALTER TABLE STUDENCI
+MODIFY srednia_ocen DEFAULT 5.5; 
