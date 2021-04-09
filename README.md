@@ -4,7 +4,7 @@
 ### Deadline table
 |Lab nr| Assignment date  | Mark | Solution sent | Comments |
 | ---- | ---------------  | ---- | ------------- | -------- |
-|  01  | 19.03.2021 | ---- | ✔️ | All DONE |
+|  01  | 19.03.2021 | 0/2 | ✔️ | All DONE - NO FORMATTING |
 |  02  | 02.04.2021 | ---- | ✔️ |All DONE  |
 |  03  | 15.04.2021 | ---- |✖️ |All DONE|
 |  04  | Not available | ---- |✖️ |ALL DONE|
