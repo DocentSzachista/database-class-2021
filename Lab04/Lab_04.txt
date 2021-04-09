@@ -33,3 +33,19 @@ HAVING AVG(e.salary) > (SELECT AVG(e.salary)
                         RIGHT JOIN hr.locations l  USING(location_id)
                         WHERE l.city='London'
                         GROUP BY l.city );
+--4.5
+SELECT e.last_name "Nazwisko_pracownika", e.salary "Wyplata", "Srednia_wyplata" 
+FROM hr.employees e
+NATURAL JOIN (SELECT AVG(er.salary) "Srednia_wyplata", er.department_id 
+                FROM hr.employees er 
+                GROUP BY er.department_id)
+-- a tak by sobie wyswietlic malejaco
+ORDER BY "Wyplata" DESC;
+--4.6
+SELECT e.last_name "Nazwisko_pracownika", dp.department_name, e.salary 
+FROM hr.employees e
+RIGHT JOIN hr.departments dp USING(department_id)
+JOIN (SELECT MAX(e.salary) "max_wyplata", e.department_id 
+     FROM hr.employees e
+     GROUP BY e.department_id) USING (department_id)
+WHERE e.salary = "max_wyplata";
