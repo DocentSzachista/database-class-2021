@@ -1,0 +1,35 @@
+--4.1 
+SELECT e.last_name "nazwisko pracownika", e.salary "wypłata" 
+FROM hr.employees e
+WHERE e.salary> 0.9*(SELECT ep.salary 
+		     FROM hr.employees ep 
+		     WHERE ep.last_name= 'Chen');
+--4.2
+SELECT e.last_name "nazwisko pracownika", e.salary "wypłata" 
+FROM hr.employees e
+WHERE e.salary > (SELECT MAX(ep.salary) 
+		  FROM hr.employees ep
+		  WHERE ep.department_id= (SELECT dp.department_id 
+		  FROM hr.departments dp 
+		  WHERE dp.department_name = 'Marketing'));
+--4.3
+SELECT dp.department_name "nazwa dzialu", COUNT(e.employee_id) FROM hr.departments dp
+LEFT JOIN hr.employees e USING(department_id)
+GROUP BY dp.department_name
+HAVING COUNT(e.employee_id)> (SELECT COUNT(e.employee_id) 
+                            FROM hr.employees e 
+                            RIGHT JOIN hr.departments dp USING(department_id)
+                            WHERE dp.department_name='Sales'
+                            GROUP BY dp.department_name);
+--4.4
+SELECT l.city "Miasto", AVG(e.salary) "Srednia wyplata" 
+FROM hr.locations l
+LEFT JOIN hr.departments dp USING (location_id)
+LEFT JOIN hr.employees e USING (department_id)
+GROUP BY l.city 
+HAVING AVG(e.salary) > (SELECT AVG(e.salary) 
+                        FROM hr.employees e
+                        RIGHT JOIN hr.departments dp USING(department_id)
+                        RIGHT JOIN hr.locations l  USING(location_id)
+                        WHERE l.city='London'
+                        GROUP BY l.city );
