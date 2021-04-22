@@ -6,8 +6,8 @@
 | ---- | ---------------  | ---- | ------------- | -------- |
 |  01  | 19.03.2021 | 0/2 | ✔️ | All DONE - NO FORMATTING |
 |  02  | 02.04.2021 | ---- | ✔️ |All DONE  |
-|  03  | 15.04.2021 | ---- |✖️ |All DONE|
-|  04  | Not available | ---- |✖️ |ALL DONE|
+|  03  | 15.04.2021 | ---- | ✔️ |All DONE|
+|  04  | 29.04.2021 | ---- |✖️ |ALL DONE|
 |  05  | Not available | ---- | ✖️|ALL DONE|
 |  06  | Not available | ---- | ✖️|ITS an exam|
 ## Useful hints/documentaries
