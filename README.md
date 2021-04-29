@@ -4,12 +4,12 @@
 ### Deadline table
 |Lab nr| Assignment date  | Mark | Solution sent | Comments |
 | ---- | ---------------  | ---- | ------------- | -------- |
-|  01  | 19.03.2021 | 0/2 | ✔️ | All DONE - NO FORMATTING |
-|  02  | 02.04.2021 | ---- | ✔️ |All DONE  |
-|  03  | 15.04.2021 | ---- | ✔️ |All DONE|
-|  04  | 29.04.2021 | ---- |✖️ |ALL DONE|
-|  05  | Not available | ---- | ✖️|ALL DONE|
-|  06  | Not available | ---- | ✖️|ITS an exam|
+|  01  | 19.03.2021 | 0/2 | ✔️  | All DONE - NO FORMATTING |
+|  02  | 02.04.2021 | ----| ✔️ |All DONE  |
+|  03  | 15.04.2021 | ----| ✔️ |All DONE|
+|  04  | 29.04.2021 | ----| ✔️ |ALL DONE|
+|  05  | 14.05.2021 | ----| ✖️|ALL DONE|
+|  06  | Not available | ----| ✖️|ITS an exam|
 ## Useful hints/documentaries
 
 1. How to use COUNT() with GROUP BY
