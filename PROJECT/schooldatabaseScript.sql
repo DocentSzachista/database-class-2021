@@ -1,7 +1,7 @@
-
-# 
+USE schooldatabase;
+# #############################################################################################################################################
 #	 DROP TABEL JEZELI ISTNIEJA
-#
+##############################################################################################################################################
 DROP TABLE IF EXISTS GROUP_MEMBERSHIP cascade;
 DROP TABLE IF EXISTS  ATTENDANCE cascade;
 DROP TABLE IF EXISTS LESSON cascade;
@@ -9,9 +9,9 @@ DROP TABLE IF EXISTS LESSON_GROUP cascade ;
 DROP TABLE IF EXISTS USERS CASCADE;
 DROP TABLE IF EXISTS USERTYPE cascade;
 DROP TABLE IF EXISTS LOGGING cascade;
-#
+##############################################################################################################################################
 #    DROP WIDOKOW
-#
+##############################################################################################################################################
 DROP VIEW IF EXISTS DISPLAY_USERS;
 DROP VIEW IF EXISTS DISPLAY_GROUPS;
 DROP PROCEDURE IF EXISTS GET_GROUPS;
@@ -21,23 +21,28 @@ DROP PROCEDURE IF EXISTS DISPLAY_GROUP_INFO_IF_IS_IN;
 DROP PROCEDURE IF EXISTS DISPLAY_ATTENDANCE;
 DROP PROCEDURE IF EXISTS DISPLAY_LESSON;
 DROP PROCEDURE IF EXISTS DISPLAY_USER_INFO;
-#
+##############################################################################################################################################
 # Tables creation
-#
+##############################################################################################################################################
 CREATE TABLE USERTYPE (
 	USER_TYPE_ID INT(6) NOT NULL UNIQUE AUTO_INCREMENT,
     USER_TYPE_NAME VARCHAR(32) NOT NULL,
     USER_TYPE_DESCRIPTION VARCHAR(200),
     PRIMARY KEY (USER_TYPE_ID)
 );
-CREATE TABLE USERS (
+
+
+
+
+CREATE TABLE USERS 
+(
 	USER_ID INT(6) NOT NULL UNIQUE  AUTO_INCREMENT,
 	FIRSTNAME VARCHAR(40) NOT NULL,
 	LASTNAME VARCHAR(40) NOT NULL,
     PHONE VARCHAR(20) NOT NULL,
     EMAIL VARCHAR(50) NOT NULL,
     USER_TYPE_ID INT(6) NOT NULL,
-    PARENT_ID INT(6),
+    PARENT_ID INT(6) NULL,
 	PRIMARY KEY (USER_ID),
     CONSTRAINT FK_USERTYPE foreign key (USER_TYPE_ID)
     REFERENCES USERTYPE(USER_TYPE_ID) ON DELETE RESTRICT,
@@ -46,7 +51,10 @@ CREATE TABLE USERS (
     CONSTRAINT UScheckFK_USERTYPE_ID CHECK (USER_TYPE_ID > 0 ),
     CONSTRAINT UScheckPARENT_ID CHECK ( PARENT_ID > 0 )
 );
-CREATE TABLE LESSON_GROUP (
+
+
+CREATE TABLE LESSON_GROUP 
+(
 	GROUP_ID INT(6) NOT NULL UNIQUE  AUTO_INCREMENT,
     GROUP_NAME VARCHAR(30) NOT NULL,
     LESSONS_AMMOUNT INT(3) NOT NULL,
@@ -57,7 +65,11 @@ CREATE TABLE LESSON_GROUP (
     REFERENCES USERS(USER_ID), 
     CONSTRAINT LGcheckFKTEACHER_ID CHECK (TEACHER_ID > 0 )
 );
-CREATE TABLE GROUP_MEMBERSHIP (
+
+
+
+CREATE TABLE GROUP_MEMBERSHIP 
+(
 	GROUP_MEMBERSHIP_ID INT(6) NOT NULL UNIQUE  AUTO_INCREMENT,
     USER_ID INT(6) NOT NULL,
     GROUP_ID INT(6) NOT NULL,
@@ -69,7 +81,11 @@ CREATE TABLE GROUP_MEMBERSHIP (
 	CONSTRAINT GMcheckFKGROUP_ID CHECK (GROUP_ID >0),
 	CONSTRAINT GMcheckFKUSER_ID CHECK (USER_ID >0)
 );
-CREATE TABLE LESSON (
+
+
+
+CREATE TABLE LESSON 
+(
 	LESSON_ID INT(6) NOT NULL UNIQUE  AUTO_INCREMENT,
     GROUP_ID INT(6) NOT NULL,
 	TOPIC VARCHAR(30),
@@ -80,7 +96,9 @@ CREATE TABLE LESSON (
     REFERENCES LESSON_GROUP(GROUP_ID),
 	CONSTRAINT LEcheckFKGROUP_ID CHECK (GROUP_ID >0 )
 );
-CREATE TABLE ATTENDANCE (
+
+CREATE TABLE ATTENDANCE 
+(
 	ATTENDANCE_ID INT(6) NOT NULL UNIQUE AUTO_INCREMENT,
     LESSON_ID INT(6) NOT NULL,
     STUDENT_ID INT(6) NOT NULL,
@@ -94,23 +112,306 @@ CREATE TABLE ATTENDANCE (
 	CONSTRAINT ATcheckFKSTUDENT_ID CHECK (STUDENT_ID >0 )
 );
 
-CREATE TABLE LOGGING(
+CREATE TABLE LOGGING
+(
 	LOG_ID INT(6) NOT NULL UNIQUE AUTO_INCREMENT,
     TABLE_ASSERTED  VARCHAR (60) NOT NULL,
     EVENT_TYPE VARCHAR(15),
     SQL_COMMAND TEXT NOT NULL,
     EVENT_DATE DATETIME NOT NULL
 );
-SET GLOBAL log_output = 'TABLE';
-SET GLOBAL general_log = 'ON';
+#############################################################################################################################################
+# DEFINICJA UPDATE TRIGEROW
+##############################################################################################################################################
+DROP TRIGGER IF EXISTS logging_update_USERTYPE;
+DELIMITER $$
+CREATE TRIGGER logging_update_USERTYPE
+AFTER UPDATE ON USERTYPE
+FOR EACH ROW
+BEGIN
+ INSERT INTO logging
+  ( TABLE_ASSERTED, EVENT_TYPE, SQL_COMMAND, EVENT_DATE ) 
+ VALUES 
+  # ( "USERTYPE", "DELETE", CONCAT( "DELETE FROM USERTYPE WHERE USER_TYPE_ID=", CAST( OLD.USER_TYPE_ID AS CHAR ) ), current_date());
+   (	"USERTYPE", "UPDATE",
+   CONCAT( 
+     "UPDATE USERTYPE SET ",
+     if( NEW.USER_TYPE_ID = OLD.USER_TYPE_ID, "", CONCAT( "USER_TYPE_ID=", CAST( NEW.USER_TYPE_ID AS CHAR ), "," ) ),
+     if( NEW.USER_TYPE_NAME = OLD.USER_TYPE_NAME, "", CONCAT( "USER_TYPE_NAME=", "'", CAST( NEW.USER_TYPE_NAME AS CHAR ), "'," ) ),
+     if( NEW.USER_TYPE_DESCRIPTION = OLD.USER_TYPE_DESCRIPTION, "", CONCAT( "USER_TYPE_DESCRIPTION=", "'", CAST( NEW.USER_TYPE_DESCRIPTION AS CHAR ), "'," ) )
+     
+   ), current_date() );
+END $$
+DELIMITER ;
 
-#
+DROP TRIGGER IF EXISTS logging_update_USERS;
+DELIMITER $$
+CREATE TRIGGER logging_update_USERS
+AFTER UPDATE ON USERS
+FOR EACH ROW
+BEGIN
+ INSERT INTO logging
+  ( TABLE_ASSERTED, EVENT_TYPE, SQL_COMMAND, EVENT_DATE ) 
+ VALUES 
+  # ( "USERTYPE", "DELETE", CONCAT( "DELETE FROM USERTYPE WHERE USER_TYPE_ID=", CAST( OLD.USER_TYPE_ID AS CHAR ) ), current_date());
+   (	"USERTYPE", "UPDATE",
+   CONCAT( 
+     "UPDATE USERS SET ",
+     if( NEW.USER_ID = OLD.USER_ID, "", CONCAT( "USER_ID=", CAST( NEW.USER_ID AS CHAR ), "," ) ),
+     if( NEW.FIRSTNAME = OLD.FIRSTNAME, "", CONCAT( "FIRSTNAME=", "'", CAST( NEW.FIRSTNAME AS CHAR ), "'," ) ),
+     if( NEW.LASTNAME = OLD.LASTNAME, "", CONCAT( "LASTNAME=", "'", CAST( NEW.LASTNAME AS CHAR ), "'," ) ),
+     if( NEW.PHONE = OLD.PHONE, "", CONCAT( "PHONE=", "'", CAST( NEW.PHONE AS CHAR ), "'," ) ),
+     if( NEW.EMAIL = OLD.EMAIL, "", CONCAT( "EMAIL=", "'", CAST( NEW.EMAIL AS CHAR ), "'," ) ),
+     if( NEW.USER_TYPE_ID = OLD.USER_TYPE_ID, "", CONCAT( "USER_TYPE_ID=", "'", CAST( NEW.USER_TYPE_ID AS CHAR ), "'," ) )
+     
+   ), current_date() );
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS logging_update_LESSON_GROUP ;
+DELIMITER $$
+CREATE TRIGGER logging_update_LESSON_GROUP 
+AFTER UPDATE ON LESSON_GROUP 
+FOR EACH ROW
+BEGIN
+ INSERT INTO logging
+  ( TABLE_ASSERTED, EVENT_TYPE, SQL_COMMAND, EVENT_DATE ) 
+ VALUES 
+  # ( "USERTYPE", "DELETE", CONCAT( "DELETE FROM USERTYPE WHERE USER_TYPE_ID=", CAST( OLD.USER_TYPE_ID AS CHAR ) ), current_date());
+   (	"USERTYPE", "UPDATE",
+   CONCAT( 
+     "UPDATE LESSON_GROUP  SET ",
+     if( NEW.GROUP_ID = OLD.GROUP_ID, "", CONCAT( "GROUP_ID=", CAST( NEW.GROUP_ID AS CHAR ), "," ) ),
+     if( NEW.GROUP_NAME = OLD.GROUP_NAME, "", CONCAT( "GROUP_NAME=", "'", CAST( NEW.GROUP_NAME AS CHAR ), "'," ) ),
+     if( NEW.LESSONS_AMMOUNT = OLD.LESSONS_AMMOUNT, "", CONCAT( "LESSONS_AMMOUNT=", "'", CAST( NEW.LESSONS_AMMOUNT AS CHAR ), "'," ) ),
+     if( NEW.GROUP_DESCRIPTION = OLD.GROUP_DESCRIPTION, "", CONCAT( "GROUP_DESCRIPTION=", "'", CAST( NEW.GROUP_DESCRIPTION AS CHAR ), "'," ) ),
+     if( NEW.TEACHER_ID = OLD.TEACHER_ID, "", CONCAT( "TEACHER_ID=", "'", CAST( NEW.TEACHER_ID AS CHAR ), "'," ) )
+     
+   ), current_date() );
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS logging_update_GROUP_MEMBERSHIP ;
+DELIMITER $$
+CREATE TRIGGER logging_update_GROUP_MEMBERSHIP 
+AFTER UPDATE ON GROUP_MEMBERSHIP 
+FOR EACH ROW
+BEGIN
+ INSERT INTO logging
+  ( TABLE_ASSERTED, EVENT_TYPE, SQL_COMMAND, EVENT_DATE ) 
+ VALUES 
+  # ( "USERTYPE", "DELETE", CONCAT( "DELETE FROM USERTYPE WHERE USER_TYPE_ID=", CAST( OLD.USER_TYPE_ID AS CHAR ) ), current_date());
+   (	"USERTYPE", "UPDATE",
+   CONCAT( 
+     "UPDATE GROUP_MEMBERSHIP  SET ",
+     if( NEW.GROUP_MEMBERSHIP_ID = OLD.GROUP_MEMBERSHIP_ID, "", CONCAT( "GROUP_MEMBERSHIP_ID=", CAST( NEW.GROUP_MEMBERSHIP_ID AS CHAR ), "," ) ),
+     if( NEW.USER_ID = OLD.USER_ID, "", CONCAT( "USER_ID=", "'", CAST( NEW.USER_ID AS CHAR ), "'," ) ),
+     if( NEW.GROUP_ID = OLD.GROUP_ID, "", CONCAT( "GROUP_ID=", "'", CAST( NEW.GROUP_ID AS CHAR ), "'," ) )
+     
+   ), current_date() );
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS logging_update_LESSON  ;
+DELIMITER $$
+CREATE TRIGGER logging_update_LESSON 
+AFTER UPDATE ON  LESSON  
+FOR EACH ROW
+BEGIN
+ INSERT INTO logging
+  ( TABLE_ASSERTED, EVENT_TYPE, SQL_COMMAND, EVENT_DATE ) 
+ VALUES 
+  # ( "USERTYPE", "DELETE", CONCAT( "DELETE FROM USERTYPE WHERE USER_TYPE_ID=", CAST( OLD.USER_TYPE_ID AS CHAR ) ), current_date());
+   (	"USERTYPE", "UPDATE",
+   CONCAT( 
+     "UPDATE LESSON  SET ",
+     if( NEW.LESSON_ID = OLD.LESSON_ID, "", CONCAT( "LESSON_ID=", CAST( NEW.LESSON_ID AS CHAR ), "," ) ),
+     if( NEW.GROUP_ID = OLD.GROUP_ID, "", CONCAT( "GROUP_ID=", "'", CAST( NEW.GROUP_ID AS CHAR ), "'," ) ),
+     if( NEW.TOPIC = OLD.TOPIC, "", CONCAT( "TOPIC=", "'", CAST( NEW.TOPIC AS CHAR ), "'," ) ),
+     if( NEW.START_TIME = OLD.START_TIME, "", CONCAT( "START_TIME=", "'", CAST( NEW.START_TIME AS CHAR ), "'," ) ),
+     if( NEW.END_TIME = OLD.END_TIME, "", CONCAT( "END_TIME=", "'", CAST( NEW.END_TIME AS CHAR ), "'," ) )
+     
+   ), current_date() );
+END $$
+DELIMITER ;
+
+
+#############################################################################################################################################
+# DEFINICJA DELETE TRIGEROW
+##############################################################################################################################################
+DROP TRIGGER IF EXISTS logging_DELETE_USERTYPE;
+DELIMITER $$
+CREATE TRIGGER logging_DELETE_USERTYPE
+AFTER DELETE ON USERTYPE
+FOR EACH ROW
+BEGIN
+ INSERT INTO logging                                  -- table that records the changes
+   ( TABLE_ASSERTED, EVENT_TYPE, SQL_COMMAND, EVENT_DATE ) 
+ VALUES 
+   ( "USERTYPE", "DELETE", CONCAT( "DELETE FROM USERTYPE WHERE USER_TYPE_ID=", CAST( OLD.USER_TYPE_ID AS CHAR ) ), current_date());
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS logging_DELETE_USERS ;
+DELIMITER $$
+CREATE TRIGGER logging_DELETE_USERS 
+AFTER DELETE ON USERS 
+FOR EACH ROW
+BEGIN
+ INSERT INTO logging                                  -- table that records the changes
+   ( TABLE_ASSERTED, EVENT_TYPE, SQL_COMMAND, EVENT_DATE ) 
+ VALUES 
+   ( "USERS", "DELETE", CONCAT( "DELETE FROM USERS  WHERE USER_ID=", CAST( OLD.USER_ID AS CHAR ) ), current_date());
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS logging_LESSON_GROUP ;
+DELIMITER $$
+CREATE TRIGGER logging_LESSON_GROUP 
+AFTER DELETE ON LESSON_GROUP
+FOR EACH ROW
+BEGIN
+ INSERT INTO logging                                  -- table that records the changes
+   ( TABLE_ASSERTED, EVENT_TYPE, SQL_COMMAND, EVENT_DATE ) 
+ VALUES 
+   ( "USERS", "DELETE", CONCAT( "DELETE FROM LESSON_GROUP  WHERE GROUP_ID =", CAST( OLD.GROUP_ID  AS CHAR ) ), current_date());
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS logging_GROUP_MEMBERSHIP;
+DELIMITER $$
+CREATE TRIGGER logging_GROUP_MEMBERSHIP 
+AFTER DELETE ON GROUP_MEMBERSHIP 
+FOR EACH ROW
+BEGIN
+ INSERT INTO logging                                  -- table that records the changes
+   ( TABLE_ASSERTED, EVENT_TYPE, SQL_COMMAND, EVENT_DATE ) 
+ VALUES 
+   ( "USERS", "DELETE", CONCAT( "DELETE FROM GROUP_MEMBERSHIP WHERE GROUP_MEMBERSHIP_ID =", CAST( OLD.GROUP_MEMBERSHIP_ID  AS CHAR ) ), current_date());
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS logging_LESSON;
+DELIMITER $$
+CREATE TRIGGER logging_LESSON 
+AFTER DELETE ON LESSON 
+FOR EACH ROW
+BEGIN
+ INSERT INTO logging                                  -- table that records the changes
+   ( TABLE_ASSERTED, EVENT_TYPE, SQL_COMMAND, EVENT_DATE ) 
+ VALUES 
+   ( "USERS", "DELETE", CONCAT( "DELETE FROM LESSON  WHERE LESSON_ID =", CAST( OLD.LESSON_ID  AS CHAR ) ), current_date());
+END $$
+DELIMITER ;
+##############################################################################################################################################
+# DEFINICJA INSERT  TRIGEROW 
+##############################################################################################################################################
+
+
+DROP TRIGGER IF EXISTS logg_insert_users;
+DELIMITER $$
+CREATE TRIGGER logg_insert_users                 -- trigger name
+AFTER INSERT ON USERS                             -- table being triggered after insert queries
+FOR EACH ROW
+BEGIN
+ INSERT INTO logging                                  -- table that records the changes
+   ( TABLE_ASSERTED, EVENT_TYPE, SQL_COMMAND, EVENT_DATE ) 
+ VALUES
+   ( "USERS", "INSERT", CONCAT(
+   "insert into users (user_id, FIRSTNAME, LASTNAME, EMAIL, PHONE, USER_TYPE_ID) values (",
+   CAST(NEW.USER_ID AS CHAR), ",",
+   CAST(NEW.FIRSTNAME AS CHAR), ",", 
+   CAST(NEW.LASTNAME AS CHAR), ",",
+   CAST(NEW.EMAIL AS CHAR), ",",
+   CAST(NEW.PHONE AS CHAR), ",",
+   CAST(NEW.USER_TYPE_ID AS CHAR)," );" ), curdate() );
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS logg_insert_USERTYPE;
+DELIMITER $$
+CREATE TRIGGER logg_insert_USERTYPE                 -- trigger name
+AFTER INSERT ON USERTYPE                            -- table being triggered after insert queries
+FOR EACH ROW
+BEGIN
+ INSERT INTO logging                                  -- table that records the changes
+   ( TABLE_ASSERTED, EVENT_TYPE, SQL_COMMAND, EVENT_DATE ) 
+ VALUES
+ 
+   ( "USERTYPE", "INSERT", CONCAT(
+   "INSERT INTO USERTYPE (USER_TYPE_ID, USER_TYPE_NAME, USER_TYPE_DESCRIPTION) VALUES(",
+   CAST(NEW.USER_TYPE_ID AS CHAR), ",",
+   CAST(NEW.USER_TYPE_NAME AS CHAR), ",", 
+   CAST(NEW.USER_TYPE_DESCRIPTION AS CHAR)," );" ), curdate() );
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS logg_insert_LESSON_GROUP;
+DELIMITER $$
+CREATE TRIGGER logg_insert_LESSON_GROUP                 -- trigger name
+AFTER INSERT ON LESSON_GROUP                           -- table being triggered after insert queries
+FOR EACH ROW
+BEGIN
+ INSERT INTO logging                                  -- table that records the changes
+   ( TABLE_ASSERTED, EVENT_TYPE, SQL_COMMAND, EVENT_DATE ) 
+ VALUES
+   ( "LESSON_GROUP", "INSERT", CONCAT(
+   "INSERT INTO LESSON_GROUP (GROUP_ID, GROUP_NAME, GROUP_DESCRIPTION, LESSONS_AMMOUNT, TEACHER_ID) values (",
+   CAST(NEW.GROUP_ID AS CHAR), ",",
+   CAST(NEW.GROUP_NAME AS CHAR), ",", 
+   CAST(NEW.GROUP_DESCRIPTION AS CHAR),
+   CAST(NEW.LESSONS_AMMOUNT AS CHAR),
+   CAST(NEW.TEACHER_ID AS CHAR)," );" ), curdate() );
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS logg_insert_GROUP_MEMBERSHIP;
+DELIMITER $$
+CREATE TRIGGER logg_insert_GROUP_MEMBERSHIP                 -- trigger name
+AFTER INSERT ON GROUP_MEMBERSHIP                           -- table being triggered after insert queries
+FOR EACH ROW
+BEGIN
+ INSERT INTO logging                                  -- table that records the changes
+   ( TABLE_ASSERTED, EVENT_TYPE, SQL_COMMAND, EVENT_DATE ) 
+ VALUES
+
+   ( "GROUP_MEMBERSHIP", "INSERT", CONCAT(
+   "INSERT INTO GROUP_MEMBERSHIP (GROUP_MEMBERSHIP_ID, USER_ID, GROUP_ID) values (",
+   CAST(NEW.GROUP_MEMBERSHIP_ID AS CHAR), ",",
+   CAST(NEW.USER_ID AS CHAR), ",",
+   CAST(NEW.GROUP_ID AS CHAR), ");" ), curdate() );
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS logg_insert_LESSON;
+DELIMITER $$
+CREATE TRIGGER logg_insert_LESSON                 -- trigger name
+AFTER INSERT ON LESSON                          -- table being triggered after insert queries
+FOR EACH ROW
+BEGIN
+ INSERT INTO logging                                  -- table that records the changes
+   ( TABLE_ASSERTED, EVENT_TYPE, SQL_COMMAND, EVENT_DATE ) 
+ VALUES
+   ( "LESSON", "INSERT", CONCAT(
+   "LESSON (LESSON_ID, GROUP_ID, TOPIC, START_TIME, END_TIME) values (",
+   CAST(NEW.LESSON_ID AS CHAR), ",",
+   CAST(NEW.GROUP_ID AS CHAR), ",", 
+   CAST(NEW.TOPIC AS CHAR),
+   CAST(NEW.START_TIME AS CHAR),
+   CAST(NEW.END_TIME AS CHAR)," );" ), curdate() );
+END $$
+DELIMITER ;
+
+
+
+##############################################################################################################################################
 # VIEWS
-#
+##############################################################################################################################################
 CREATE VIEW display_users AS
 SELECT FIRSTNAME, LASTNAME, PHONE, EMAIL, USER_TYPE_NAME
 FROM USERS
 NATURAL JOIN USERTYPE ; 
+
 CREATE VIEW DISPLAY_GROUPS AS
 SELECT GROUP_NAME, LESSONS_AMMOUNT, GROUP_DESCRIPTION, FIRSTNAME, LASTNAME, PHONE, EMAIL
 FROM LESSON_GROUP
@@ -205,14 +506,17 @@ BEGIN
 END //
 DELIMITER ;
 
-
+#############################################################################################################################################
 # 	Insertion of user-types
+#############################################################################################################################################
 INSERT INTO USERTYPE (USER_TYPE_NAME, USER_TYPE_DESCRIPTION) VALUES("uczen", "Uczestnik zajec przeprowadzanych przez nauczyciela");
 INSERT INTO USERTYPE (USER_TYPE_NAME, USER_TYPE_DESCRIPTION) VALUES("admin", "Administrator, który moderuje użytkowników aplikacji");
 INSERT INTO USERTYPE (USER_TYPE_NAME, USER_TYPE_DESCRIPTION) VALUES("nauczyciel", "Przeprowadza zajecia w grupach utworzonych przez administratora");
 
 # 	Insertion of users
+#############################################################################################################################################
 #Teachers
+#############################################################################################################################################
 insert into users (FIRSTNAME, LASTNAME, EMAIL, PHONE, USER_TYPE_ID, PARENT_ID) values ('Waylon', 'Nowick', 'wnowick0@bluehost.com', '+358 235 145 8426', 3, null);
 insert into users (FIRSTNAME, LASTNAME, EMAIL, PHONE, USER_TYPE_ID, PARENT_ID) values ('Norrie', 'Donnett', 'ndonnett1@canalblog.com', '+230 144 512 9942', 3, null);
 insert into users (FIRSTNAME, LASTNAME, EMAIL, PHONE, USER_TYPE_ID, PARENT_ID) values ('Ginni', 'McEvay', 'gmcevay2@rakuten.co.jp', '+81 187 727 4916', 3, null);
@@ -220,10 +524,15 @@ insert into users (FIRSTNAME, LASTNAME, EMAIL, PHONE, USER_TYPE_ID, PARENT_ID) v
 insert into users (FIRSTNAME, LASTNAME, EMAIL, PHONE, USER_TYPE_ID, PARENT_ID) values ('Staford', 'Slowey', 'sslowey4@macromedia.com', '+86 238 560 7508', 3, null);
 insert into users (FIRSTNAME, LASTNAME, EMAIL, PHONE, USER_TYPE_ID, PARENT_ID) values ('Candide', 'Murkin', 'cmurkin5@elegantthemes.com', '+86 979 955 1876', 3, null);
 insert into users (FIRSTNAME, LASTNAME, EMAIL, PHONE, USER_TYPE_ID, PARENT_ID) values ('Will', 'Farden', 'wfarden6@blogs.com', '+55 371 712 2162', 3, null);
+#############################################################################################################################################
 #admin
+#############################################################################################################################################
 insert into users (FIRSTNAME, LASTNAME, EMAIL, PHONE, USER_TYPE_ID, PARENT_ID) values ('Lorens', 'Mecco', 'lmecco7@skype.com', '+7 891 186 7900', 2, null);
 
+
+#############################################################################################################################################
 #Students and parents
+#############################################################################################################################################
 insert into users (FIRSTNAME, LASTNAME, EMAIL, PHONE, USER_TYPE_ID, PARENT_ID) values ('Marisa', 'Attenborrow', 'mattenborrow8@meetup.com', '+86 184 560 9830', 1, null);
 insert into users (FIRSTNAME, LASTNAME, EMAIL, PHONE, USER_TYPE_ID, PARENT_ID) values ('Janna', 'Richfield', 'jrichfield9@disqus.com', '+223 247 152 1392', 1, null);
 insert into users (FIRSTNAME, LASTNAME, EMAIL, PHONE, USER_TYPE_ID, PARENT_ID) values ('Adrienne', 'Gerardin', 'agerardina@dagondesign.com', '+86 630 706 3606', 1, null);
@@ -316,6 +625,8 @@ insert into users (FIRSTNAME, LASTNAME, EMAIL, PHONE, USER_TYPE_ID, PARENT_ID) v
 insert into users (FIRSTNAME, LASTNAME, EMAIL, PHONE, USER_TYPE_ID, PARENT_ID) values ('Rodie', 'Clemens', 'rclemens2p@apache.org', '+48 174 617 6355', 1, null);
 insert into users (FIRSTNAME, LASTNAME, EMAIL, PHONE, USER_TYPE_ID, PARENT_ID) values ('Fredek', 'Asple', 'fasple2q@guardian.co.uk', '+62 807 367 9539', 1, null);
 insert into users (FIRSTNAME, LASTNAME, EMAIL, PHONE, USER_TYPE_ID, PARENT_ID) values ('Frans', 'Ors', 'fors2r@ft.com', '+256 338 185 2787', 1, null);
+
+#############################################################################################################################################
 #	Insertion of Groups
 
 insert into LESSON_GROUP (GROUP_NAME, GROUP_DESCRIPTION, LESSONS_AMMOUNT, TEACHER_ID) values ('ANGIELSKI B2', 'nec dui luctus rutrum nulla tellus in sagittis dui vel nisl duis ac nibh fusce lacus', 0, 1);
@@ -329,7 +640,9 @@ insert into LESSON_GROUP (GROUP_NAME, GROUP_DESCRIPTION, LESSONS_AMMOUNT, TEACHE
 insert into LESSON_GROUP (GROUP_NAME, GROUP_DESCRIPTION, LESSONS_AMMOUNT, TEACHER_ID) values ('lobortis', 'ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae donec pharetra magna vestibulum aliquet', 0, 2);
 insert into LESSON_GROUP (GROUP_NAME, GROUP_DESCRIPTION, LESSONS_AMMOUNT, TEACHER_ID) values ('diam vitae', 'tincidunt in leo maecenas pulvinar lobortis est phasellus sit amet erat nulla tempus vivamus', 0, 3);
 
+#############################################################################################################################################
 # 	GROUP_ MEMBERSHIPS
+#############################################################################################################################################
 insert into GROUP_MEMBERSHIP (USER_ID, GROUP_ID) values (11, 5);
 insert into GROUP_MEMBERSHIP (USER_ID, GROUP_ID) values (84, 2);
 insert into GROUP_MEMBERSHIP (USER_ID, GROUP_ID) values (80, 3);
@@ -420,12 +733,11 @@ insert into GROUP_MEMBERSHIP (USER_ID, GROUP_ID) values (69, 4);
 insert into GROUP_MEMBERSHIP (USER_ID, GROUP_ID) values (19, 2);
 insert into GROUP_MEMBERSHIP (USER_ID, GROUP_ID) values (76, 6);
 insert into GROUP_MEMBERSHIP (USER_ID, GROUP_ID) values (50, 6);
-
 #  CALL GET_GROUPS_TEACHER(1);
 
 /*
 *
-*Sekcja na akcje UPDATE/ DELETE I WIDOKI
+*Sekcja na akcje UPDATE/ DELETE I wywoływanie WIDOKÓW
 *
 */
 UPDATE USERS SET FIRSTNAME = "Damian" WHERE USER_ID=1;
