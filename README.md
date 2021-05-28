@@ -8,8 +8,8 @@
 |  02  | 02.04.2021 | ----| ✔️ |All DONE  |
 |  03  | 15.04.2021 | ----| ✔️ |All DONE|
 |  04  | 29.04.2021 | ----| ✔️ |ALL DONE|
-|  05  | 14.05.2021 | ----| ✖️|ALL DONE|
-|  06  | Not available | ----| ✖️|ITS an exam|
+|  05  | 14.05.2021 | ----| ✔️|ALL DONE|
+|  06  | 27.05.2021 | ----| ✔️|ALL DONE|
 ## Useful hints/documentaries
 
 1. How to use COUNT() with GROUP BY
@@ -19,6 +19,9 @@
      1. https://www.sqlshack.com/sql-avg-function-introduction-and-examples/    
 3. Example of using INNER JOIN with USING
      1. https://lornajane.net/posts/2012/sql-joins-with-on-or-using
+4. For union etc operations
+     1. https://www.sqlpedia.pl/operacje-na-zbiorach/
+     2. https://tomaszkenig.pl/kurs-sql-server/zlaczenia-pionowe-sql-union-intersect-except-sql-server/
 ## Sekcja na projekt
 Projektowanie ERD
 Wykład 6.2 , 7.0
