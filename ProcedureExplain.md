@@ -75,7 +75,7 @@ just better change your engine for example for MYSQL server.</p>
 <p> If you want to do that in this way described as above you will make your life harder, because its easy to get yourself lost with all of these enclosings. 
 AS you can see in the example, to add 3 columns into INSERT statement I had to create 4x nested CONCAT function, when in MYSQL workbench you could do it in one simple use of the same function
 </p>
-## Fragment of trigger code in MYSQL WORKBENCH
+<h2> Fragment of trigger code in MYSQL WORKBENCH</h2>
 
 ```
    ( "USERTYPE", "INSERT", CONCAT(
@@ -84,3 +84,4 @@ AS you can see in the example, to add 3 columns into INSERT statement I had to c
    CAST(NEW.USER_TYPE_NAME AS CHAR), ",", 
    CAST(NEW.USER_TYPE_DESCRIPTION AS CHAR)," );" ), curdate() );
 ```
+Of course no language is perfect as mentioned mysql workbench doesn't allow you to create trigger one which will suit every case of DML operation in one declaration  of the trigger (or it allows that too but i was too dumb to find info how to do it ;), but that I leave for you to check )
