@@ -73,5 +73,14 @@ END;
 just better change your engine for example for MYSQL server.</p>
 <p>Why should you? </p>
 <p> If you want to do that in this way described as above you will make your life harder, because its easy to get yourself lost with all of these enclosings. 
-AS you can see in the example, to add 3 columns into INSERT statement I had to create 4x nested CONCAT function, when in MYSQL server you could do it in one simple use of the same function
+AS you can see in the example, to add 3 columns into INSERT statement I had to create 4x nested CONCAT function, when in MYSQL workbench you could do it in one simple use of the same function
 </p>
+## Fragment of trigger code in MYSQL WORKBENCH
+
+```
+   ( "USERTYPE", "INSERT", CONCAT(
+   "INSERT INTO USERTYPE (USER_TYPE_ID, USER_TYPE_NAME, USER_TYPE_DESCRIPTION) VALUES(",
+   CAST(NEW.USER_TYPE_ID AS CHAR), ",",
+   CAST(NEW.USER_TYPE_NAME AS CHAR), ",", 
+   CAST(NEW.USER_TYPE_DESCRIPTION AS CHAR)," );" ), curdate() );
+```
